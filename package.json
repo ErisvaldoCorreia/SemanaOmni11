@@ -1,0 +1,20 @@
+{
+  "name": "SemanaOmni11",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/ErisvaldoCorreia/SemanaOmni11.git",
+  "author": "ErisvaldoCorreia <correiaerisvaldo@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "commitizen": "^4.0.3",
+    "cz-conventional-changelog": "3.1.0"
+  },
+  "scripts": {
+    "commit": "git-cz"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}

@@ -2,17 +2,24 @@ import React from 'react';
 import { Linking, SafeAreaView, View, Image, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Constants from 'expo-constants';
 import { Feather } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import * as MailComposer from 'expo-mail-composer';
 
 import Logo from './../../assets/logo.png';
 
-// import { Container } from './styles';
-
 export default function Detail() {
   
+  // coletando os dados vindos no parametros da rota navegada.
+  const route = useRoute()
+  const caso = route.params.caso;
+
   const navigation = useNavigation()
-  const message = 'Ola APADA, estou entrando em contato para saber como ajudar no caso "Cadelinha Atropelada".';
+  const message = `
+    Olá ${caso.name},
+    Estou entrando em contato para saber como ajudar no caso:
+    ${caso.title}.
+    Fico no aguardo de um contato! :)
+  `;
 
   function navigateToBack() {
     navigation.goBack()
@@ -20,14 +27,14 @@ export default function Detail() {
 
   function sendMail() {
     MailComposer.composeAsync({
-      subject: 'Heroi do caso: Cadelinha Atropelada',
-      recipients: ['correiaerisvaldo@gmail.com'],
+      subject: `Heroi do caso: ${caso.title}`,
+      recipients: [caso.email],
       body: message
     })
   }
 
   function sendWhats() {
-    Linking.openURL(`whatsapp://send?phone=5511958052138&text=${message}`);
+    Linking.openURL(`whatsapp://send?phone=55${caso.whatsapp}&text=${message}`);
   }
 
   return (
@@ -47,16 +54,20 @@ export default function Detail() {
                     <View style={styles.ListaFirstLine}>
                         <View>
                             <Text style={styles.ListaTitle}>ONG:</Text>
-                            <Text style={styles.ListaDesc}>APADA</Text>
+                            <Text style={styles.ListaDesc}>{caso.name} - {caso.city}/{caso.uf}</Text>
                         </View>
                         <View>
-                            <Text style={styles.ListaTitle}>Valor:</Text>
-                            <Text style={styles.ListaDesc}>R$: 120.00</Text>
+                            <Text style={styles.ListaTitle}>VALOR:</Text>
+                            <Text style={styles.ListaDesc}>R$ {caso.value}.00</Text>
                         </View>
                     </View>
                     <View style={styles.ListaSecondLine}>
+                        <Text style={styles.ListaTitle}>Caso:</Text>
+                        <Text style={styles.ListaDesc}>{caso.title}</Text>
+                    </View>
+                    <View style={styles.ListaSecondLine}>
                         <Text style={styles.ListaTitle}>Descrição:</Text>
-                        <Text style={styles.ListaDesc}>Caso de uma cadelinha atropelada</Text>
+                        <Text style={styles.ListaDesc}>{caso.description}</Text>
                     </View>
                 </View>
                 <View style={styles.boxContact}>

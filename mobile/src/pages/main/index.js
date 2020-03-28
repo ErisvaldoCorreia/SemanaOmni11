@@ -1,27 +1,53 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { FlatList, SafeAreaView, View, Image, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Constants from 'expo-constants';
 import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import api from '../../services/api';
 
 import Logo from './../../assets/logo.png';
 // import { Container } from './styles';
 
 export default function Main() {
   
+    const [casos, setCasos] = useState([])
+    const [total, setTotal] = useState(0)
+    const [page, setPage] = useState(1)
+    const [loading, setLoading] = useState(false)
+
     const navigation = useNavigation()
 
-    function navigateToDatail() {
-        navigation.navigate('Detail')
+    function navigateToDatail(caso) {
+        navigation.navigate('Detail', {caso})
     }
     
+    async function loadCasos() {
+
+        if(loading){ return };
+        if(total > 0 && casos.length === total) { return };
+
+        setLoading(true)
+
+        const response = await api.get('api/casos', {params: {page}});
+        setCasos([...casos, ...response.data])
+        setTotal(response.headers['x-total-count'])
+        setPage(page + 1)
+        setLoading(false)
+
+    }
+
+    useEffect(() => {
+        loadCasos()
+    }, []);
+
+
   return (
     <SafeAreaView style={styles.container}>
         
         <View style={styles.containerArea}>
             <Image source={Logo} />
             <Text style={styles.header}>
-                Total de <Text style={styles.headerBold}>0 casos</Text>
+                Total de <Text style={styles.headerBold}>{total} casos</Text>
             </Text>
         </View>
         <Text style={styles.title}>Bem-vindo!</Text>
@@ -29,27 +55,29 @@ export default function Main() {
 
         <FlatList 
             style={styles.ListaContainer}
-            data={[1, 2, 3, 4, 5]}
-            keyExtractor={item => String(item)}
+            data={casos}
+            keyExtractor={caso => String(caso.id)}
             showsVerticalScrollIndicator={false}
-            renderItem={() => (
+            onEndReached={loadCasos}
+            onEndReachedThreshold={0.2}
+            renderItem={({item: casos}) => (
                 <View style={styles.Lista}>
                     <View style={styles.ListaFirstLine}>
                         <View>
                             <Text style={styles.ListaTitle}>ONG:</Text>
-                            <Text style={styles.ListaDesc}>APADA</Text>
+                            <Text style={styles.ListaDesc}>{casos.name}</Text>
                         </View>
                         <View>
-                            <Text style={styles.ListaTitle}>Valor:</Text>
-                            <Text style={styles.ListaDesc}>R$: 120.00</Text>
+                            <Text style={styles.ListaTitle}>CASO:</Text>
+                            <Text style={styles.ListaDesc}>{casos.title}</Text>
                         </View>
                     </View>
                     <View style={styles.ListaSecondLine}>
-                        <Text style={styles.ListaTitle}>Descrição:</Text>
-                        <Text style={styles.ListaDesc}>Caso de uma cadelinha atropelada</Text>
+                        <Text style={styles.ListaTitle}>VALOR:</Text>
+                        <Text style={styles.ListaDesc}>R$ {casos.value}.00</Text>
                     </View>
 
-                    <TouchableOpacity onPress={navigateToDatail} style={styles.ListaButtom}>
+                    <TouchableOpacity onPress={() => navigateToDatail(casos)} style={styles.ListaButtom}>
                         <Text style={styles.ListaTextButtom}>
                             Ver mais detalhes
                         </Text>

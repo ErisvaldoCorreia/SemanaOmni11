@@ -1,18 +1,35 @@
 import React from 'react';
-import { FlatList, SafeAreaView, View, Image, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { Linking, SafeAreaView, View, Image, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Constants from 'expo-constants';
 import { Feather } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import * as MailComposer from 'expo-mail-composer';
 
 import Logo from './../../assets/logo.png';
 
 // import { Container } from './styles';
 
 export default function Detail() {
+  
   const navigation = useNavigation()
+  const message = 'Ola APADA, estou entrando em contato para saber como ajudar no caso "Cadelinha Atropelada".';
+
   function navigateToBack() {
     navigation.goBack()
   }
+
+  function sendMail() {
+    MailComposer.composeAsync({
+      subject: 'Heroi do caso: Cadelinha Atropelada',
+      recipients: ['correiaerisvaldo@gmail.com'],
+      body: message
+    })
+  }
+
+  function sendWhats() {
+    Linking.openURL(`whatsapp://send?phone=5511958052138&text=${message}`);
+  }
+
   return (
     <SafeAreaView style={styles.container}>
         
@@ -50,12 +67,12 @@ export default function Detail() {
                       Entre em contato!
                     </Text>
                     <View style={styles.actions}>
-                    <TouchableOpacity onPress={() => {}} style={styles.ListaButtom}>
+                    <TouchableOpacity onPress={sendWhats} style={styles.ListaButtom}>
                         <Text style={styles.ListaTextButtom}>
                             WhatsApp
                         </Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => {}} style={styles.ListaButtom}>
+                    <TouchableOpacity onPress={sendMail} style={styles.ListaButtom}>
                         <Text style={styles.ListaTextButtom}>
                             E-mail
                         </Text>

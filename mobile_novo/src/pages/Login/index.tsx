@@ -4,10 +4,11 @@ import { AntDesign } from '@expo/vector-icons';
 import { Container, Titulo, SubTitulo, Botao } from './styles';
 
 const Login: React.FC = () => {
+
   return (
       <Container>
           <Titulo>Be The Hero</Titulo>
-          <SubTitulo>Uma nova Experiência chegando!</SubTitulo>
+          <SubTitulo>Um novo jeito de ser Herói!</SubTitulo>
 
           <Botao>
             <AntDesign name="home" size={24} color="black" />
